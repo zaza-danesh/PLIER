@@ -1,0 +1,14 @@
+Package: PLIER
+Type: Package
+Title: Pathway-Level Information Extractor (PLIER): a generative model for gene expression data
+Version: 0.99.0
+Date: 2019-12-31
+Author: Maria Chikina, Weiguang Mao
+Maintainer: <mchikina@gmail.com>
+Description: Prior information
+License: GPL (>=2)
+RoxygenNote: 6.0.1
+VignetteBuilder: knitr
+biocViews: qvalue
+Depends: RColorBrewer, gplots, pheatmap, glmnet, knitr, rsvd, qvalue
+
