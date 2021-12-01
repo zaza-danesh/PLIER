@@ -422,6 +422,8 @@ PLIER=function(data, priorMat,svdres=NULL, k=NULL, L1=NULL, L2=NULL, L3=NULL,  f
   if(nrow(priorMat)!=nrow(data) || !all(rownames(priorMat)==rownames(data))){
     if(!allGenes){
       cm=commonRows(data, priorMat)
+      priorMat_genes <- rownames(priorMat)
+      priorMat_removed_genes <-  setdiff(priorMat_genes, cm)
       message(paste("Selecting common genes:", length(cm)))
       priorMat=priorMat[cm,]
       Y=Y[cm,]
@@ -661,7 +663,7 @@ PLIER=function(data, priorMat,svdres=NULL, k=NULL, L1=NULL, L2=NULL, L3=NULL,  f
 #' @param sort.row do not custer the matrix but instead sort it to display the positive values close do the 'diagonal'
 #' @param ... options to be passed to pheatmap
 #' @export
-plotU=function(plierRes, auc.cutoff=0.6, fdr.cutoff=0.05, indexCol=NULL, indexRow=NULL, top=3, sort.row=F,...){
+plotU=function(plierRes, auc.cutoff=0.6, fdr.cutoff=0.05, indexCol=NULL, indexRow=NULL, top=3, sort.row=F, heatmap = T,...){
   if(is.null(indexCol)){
     indexCol=1:ncol(plierRes$U)
   }
@@ -686,10 +688,10 @@ plotU=function(plierRes, auc.cutoff=0.6, fdr.cutoff=0.05, indexCol=NULL, indexRo
     Um=apply(Utmp,1,max)
     show(Um[Um!=0])
     U=U[order(-Um),]
-    plotMat(U, cluster_row=F,...)
+    plotMat(U, cluster_row=F, heatmap, ...)
   }
   else{
-    plotMat(U, ...)
+    plotMat(U, heatmap, ...)
   }
 }
 
@@ -904,7 +906,7 @@ pinv.ridge=function (m, alpha = 0)
 #' @param cutoff Sets values (both positive and negative) bellow this number to 0
 #' @param ... additional argumend to be passed to pheatmap
 #' @export
-plotMat=function(matrix,  scale=T, trim.names=50, cutoff=NULL,col.scale=NULL,...){
+plotMat=function(matrix,  scale=T, trim.names=50, cutoff=NULL,col.scale=NULL, heatmap = T,...){
   
   if(! is.null(trim.names)){
     rownames(matrix)=strtrim(rownames(matrix), trim.names)
@@ -936,6 +938,7 @@ plotMat=function(matrix,  scale=T, trim.names=50, cutoff=NULL,col.scale=NULL,...
     mycol=colscale
   }
  
+  if (!is.null(return_heatmap))
   pheatmap(matrix,color =mycol , clustering_callback = function(h,d){hclust(mydistBin(d), method = "single")}, ...)
 
   return(invisible(list(iirow=iirow, iicol=iicol)))
